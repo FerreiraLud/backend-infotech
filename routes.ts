@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 
 import ProdutoController from "./src/controller/ProdutoController.js";
+import MovimetacaoController from "./src/controller/MovimetacaoController.js";
 
 
 const router = Router();
@@ -38,6 +39,20 @@ router.get('/api/produtos/:id_produto', ProdutoController.produtoPorId);
 router.post('/api/produtos', ProdutoController.novo);
 router.delete('/api/produtos/:id_produto', ProdutoController.remover);
 router.put('/api/produtos/:id_produto', ProdutoController.atualizar);
+
+router.get('/api/movimentacoes', MovimetacaoController.todos);
+router.get('/api/movimentacoes/codigo/:codigo', MovimetacaoController.movimentacaoPorCodigo);
+router.get('/api/movimentacoes/:id_movimentacao', MovimetacaoController.MovimentacaoPorId);
+router.post('/api/movimentacoes', MovimetacaoController.novo);
+router.delete('/api/movimentacoes/:id_movimentacao', MovimetacaoController.remover);
+router.put('/api/movimentacoes/:id_movimentacao', MovimetacaoController.atualizar);
+
+router.get('/api/movimentacao', MovimetacaoController.todos);
+router.get('/api/movimentacao/codigo/:codigo', MovimetacaoController.movimentacaoPorCodigo);
+router.get('/api/movimentacao/:id_movimentacao', MovimetacaoController.MovimentacaoPorId);
+router.post('/api/movimentacao', MovimetacaoController.novo);
+router.delete('/api/movimentacao/:id_movimentacao', MovimetacaoController.remover);
+router.put('/api/movimentacao/:id_movimentacao', MovimetacaoController.atualizar);
 
 
 export { router };

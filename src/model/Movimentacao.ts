@@ -235,21 +235,30 @@ class Movimentacao {
      */
     static async cadastrarMovimentacao(movimentacao: Movimentacao): Promise<boolean> {
         try {
+            const idProduto = movimentacao.getIdProduto();
+            const idMovimentacaoOrigem = movimentacao.getIdMovimentacaoOrigem() ?? null;
+            const motivoMovimentacao = movimentacao.getMotivoMovimentacao().trim();
+            const tipoMovimentacao = movimentacao.getTipoMovimentacao().trim();
+            const quantidade = Number(movimentacao.getQuantidade());
+            const precoUnitario = Number(movimentacao.getPrecoUnitario());
+            const valorTotal = Number(movimentacao.getValorTotal()) || Number((quantidade * precoUnitario).toFixed(2));
+            const observacao = movimentacao.getObservacao() ?? "";
+            const dataMovimentacao = movimentacao.getDataMovimentacao() ?? new Date().toISOString();
+
             const queryInsertMovimentacao = `
-                INSERT INTO movimentacao (id_produto, motivo_movimentacao, id_movimentacao_origem, quantidade, tipo_movimentacao, preco_unitario, valor_total, observacao, data_movimentacao)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                INSERT INTO movimentacao (id_produto, id_movimentacao_origem, tipo, motivo, quantidade, preco_unitario_praticado, valor_total, observacao, data_movimentacao )   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 RETURNING id_movimentacao;`;
 
             const valores = [
-                movimentacao.getIdProduto(),
-                movimentacao.getMotivoMovimentacao(),
-                movimentacao.getIdMovimentacaoOrigem(),
-                movimentacao.getQuantidade(),
-                movimentacao.getTipoMovimentacao(),
-                movimentacao.getPrecoUnitario(),
-                movimentacao.getValorTotal(),
-                movimentacao.getObservacao(),
-                movimentacao.getDataMovimentacao()
+                idProduto,
+                idMovimentacaoOrigem,
+                tipoMovimentacao,
+                motivoMovimentacao,
+                quantidade,
+                precoUnitario,
+                valorTotal,
+                observacao,
+                dataMovimentacao
             ];
 
             const result = await database.query(queryInsertMovimentacao, valores);
@@ -261,8 +270,8 @@ class Movimentacao {
 
             return false;
         } catch (error) {
-            console.error(`Erro ao cadastrar movimentação: ${error}`);
-            return false;
+            console.error(`Erro ao cadastrar movimentação no banco: ${error}`);
+            throw error;
         }
     }
 
