@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Lívia Borges",
+  "author": "Lud Ferreira",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
