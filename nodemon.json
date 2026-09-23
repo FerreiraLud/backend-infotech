@@ -1,6 +1,6 @@
 {
-  "watch": ["src", "app.ts", "server.ts"],
-  "ext": "ts",
-  "ignore": [],
-  "exec": "node --loader ts-node/esm app.ts"
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["dist"],
+  "exec": "npm run build && node ./dist/index.js"
 }

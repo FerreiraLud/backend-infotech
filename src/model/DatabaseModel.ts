@@ -1,5 +1,7 @@
-import pg from 'pg';
-import dotenv from 'dotenv';
+// import pg from 'pg';
+// import dotenv from 'dotenv';
+import * as pg from 'pg';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 
