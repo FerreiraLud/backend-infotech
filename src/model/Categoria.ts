@@ -68,16 +68,13 @@ class Categoria {
         const listaDeCategorias: Array<CategoriaDTO> = [];
 
         try {
-            const querySelectCategoria = `SELECT * FROM categoria WHERE ativo = TRUE ORDER BY nome;`;
+            const querySelectCategoria = `SELECT id_categoria, nome FROM categoria ORDER BY nome;`;
             const respostaBD = await database.query(querySelectCategoria);
 
             for (const categoria of respostaBD.rows) {
                 const categoriaDTO: CategoriaDTO = {
                     id_categoria: categoria.id_categoria,
                     nome: categoria.nome,
-                    descricao: categoria.descricao,
-                    ativo: categoria.ativo,
-                    data_cadastro: categoria.data_cadastro,
                 };
 
                 listaDeCategorias.push(categoriaDTO);
@@ -108,9 +105,6 @@ class Categoria {
             const categoriaDTO: CategoriaDTO = {
                 id_categoria: respostaBD.rows[0].id_categoria,
                 nome: respostaBD.rows[0].nome,
-                descricao: respostaBD.rows[0].descricao,
-                ativo: respostaBD.rows[0].ativo,
-                data_cadastro: respostaBD.rows[0].data_cadastro,
             };
 
             return categoriaDTO;
@@ -138,9 +132,6 @@ class Categoria {
             const categoriaDTO: CategoriaDTO = {
                 id_categoria: respostaBD.rows[0].id_categoria,
                 nome: respostaBD.rows[0].nome,
-                descricao: respostaBD.rows[0].descricao,
-                ativo: respostaBD.rows[0].ativo,
-                data_cadastro: respostaBD.rows[0].data_cadastro,
             };
 
             return categoriaDTO;
@@ -158,14 +149,11 @@ class Categoria {
     static async cadastrarCategoria(categoria: Categoria): Promise<boolean> {
         try {
             const queryInsertCategoria = `
-                INSERT INTO categoria (nome, descricao)
-                VALUES ($1, $2)
+                INSERT INTO categoria (nome)
+                VALUES ($1)
                 RETURNING id_categoria;`;
 
-            const valores = [
-                categoria.getNome().trim(),
-                categoria.getDescricao().trim()
-            ];
+            const valores = [categoria.getNome().trim()];
 
             const result = await database.query(queryInsertCategoria, valores);
 

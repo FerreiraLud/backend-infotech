@@ -128,22 +128,22 @@ class Movimentacao {
         let listaDeMovimentacoes: Array<MovimentacaoDTO> = [];
 
         try {
-            const querySelectMovimentacao = `SELECT * FROM movimentacao WHERE ativo = TRUE ORDER BY id_movimentacao;`;
+            const querySelectMovimentacao = `SELECT * FROM movimentacao ORDER BY id_movimentacao;`;
             const respostaBD = await database.query(querySelectMovimentacao);
 
             for (const movimentacao of respostaBD.rows) {
                 const movimentacaoDTO: MovimentacaoDTO = {
                     id_produto: movimentacao.id_produto,
                     id_movimentacao: movimentacao.id_movimentacao,
-                    motivo_movimentacao: movimentacao.motivo_movimentacao,
+                    motivo_movimentacao: movimentacao.motivo,
                     id_movimentacao_origem: movimentacao.id_movimentacao_origem,
-                    tipo_movimentacao: movimentacao.tipo_movimentacao,
+                    tipo_movimentacao: movimentacao.tipo,
                     quantidade: movimentacao.quantidade,
-                    preco_unitario: movimentacao.preco_unitario,
+                    preco_unitario: movimentacao.preco_unitario_praticado,
                     valor_total: movimentacao.valor_total,
                     observacao: movimentacao.observacao,
                     data_movimentacao: movimentacao.data_movimentacao,
-                    ativo: movimentacao.ativo,
+                    ativo: true,
                 };
 
                 listaDeMovimentacoes.push(movimentacaoDTO);
@@ -174,15 +174,15 @@ class Movimentacao {
             const movimentacaoDTO: MovimentacaoDTO = {
                 id_produto: respostaBD.rows[0].id_produto,
                 id_movimentacao: respostaBD.rows[0].id_movimentacao,
-                motivo_movimentacao: respostaBD.rows[0].motivo_movimentacao,
+                motivo_movimentacao: respostaBD.rows[0].motivo,
                 id_movimentacao_origem: respostaBD.rows[0].id_movimentacao_origem,
-                tipo_movimentacao: respostaBD.rows[0].tipo_movimentacao,
+                tipo_movimentacao: respostaBD.rows[0].tipo,
                 quantidade: respostaBD.rows[0].quantidade,
-                preco_unitario: respostaBD.rows[0].preco_unitario,
+                preco_unitario: respostaBD.rows[0].preco_unitario_praticado,
                 valor_total: respostaBD.rows[0].valor_total,
                 observacao: respostaBD.rows[0].observacao,
                 data_movimentacao: respostaBD.rows[0].data_movimentacao,
-                ativo: respostaBD.rows[0].ativo,
+                ativo: true,
             };
 
             return movimentacaoDTO;
@@ -200,7 +200,7 @@ class Movimentacao {
      */
     static async buscarPorCodigo(codigo: string): Promise<MovimentacaoDTO | null> {
         try {
-            const querySelectCodigo = `SELECT * FROM movimentacao WHERE LOWER(motivo_movimentacao) = LOWER($1);`;
+            const querySelectCodigo = `SELECT * FROM movimentacao WHERE LOWER(motivo) = LOWER($1);`;
             const respostaBD = await database.query(querySelectCodigo, [codigo]);
 
             if (respostaBD.rows.length === 0) {
@@ -210,15 +210,15 @@ class Movimentacao {
             const movimentacaoDTO: MovimentacaoDTO = {
                 id_produto: respostaBD.rows[0].id_produto,
                 id_movimentacao: respostaBD.rows[0].id_movimentacao,
-                motivo_movimentacao: respostaBD.rows[0].motivo_movimentacao,
+                motivo_movimentacao: respostaBD.rows[0].motivo,
                 id_movimentacao_origem: respostaBD.rows[0].id_movimentacao_origem,
-                tipo_movimentacao: respostaBD.rows[0].tipo_movimentacao,
+                tipo_movimentacao: respostaBD.rows[0].tipo,
                 quantidade: respostaBD.rows[0].quantidade,
-                preco_unitario: respostaBD.rows[0].preco_unitario,
+                preco_unitario: respostaBD.rows[0].preco_unitario_praticado,
                 valor_total: respostaBD.rows[0].valor_total,
                 observacao: respostaBD.rows[0].observacao,
                 data_movimentacao: respostaBD.rows[0].data_movimentacao,
-                ativo: respostaBD.rows[0].ativo,
+                ativo: true,
             };
 
             return movimentacaoDTO;
@@ -246,7 +246,8 @@ class Movimentacao {
             const dataMovimentacao = movimentacao.getDataMovimentacao() ?? new Date().toISOString();
 
             const queryInsertMovimentacao = `
-                INSERT INTO movimentacao (id_produto, id_movimentacao_origem, tipo, motivo, quantidade, preco_unitario_praticado, valor_total, observacao, data_movimentacao )   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                INSERT INTO movimentacao (id_produto, id_movimentacao_origem, tipo, motivo, quantidade, preco_unitario_praticado, valor_total, observacao, data_movimentacao)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 RETURNING id_movimentacao;`;
 
             const valores = [
@@ -312,10 +313,10 @@ class Movimentacao {
                     UPDATE movimentacao
                     SET id_produto = $1,
                         id_movimentacao_origem = $2,
-                        motivo_movimentacao = $3,
-                        tipo_movimentacao = $4,
+                            motivo = $3,
+                            tipo = $4,
                         quantidade = $5,
-                        preco_unitario = $6,
+                            preco_unitario_praticado = $6,
                         valor_total = $7,
                         observacao = $8,
                         data_movimentacao = $9
